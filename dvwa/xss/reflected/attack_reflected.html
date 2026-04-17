@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Reflected</title>
+</head>
+<body>
+
+<form action="http://localhost:8080/vulnerabilities/xss_r/" method="GET">
+    <input type="text" name="name" value='<img src=x onerror=alert("XSS")>'>
+    <input type="submit" value="Send">
+</form>
+
+</body>
+</html>
