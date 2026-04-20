@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function toFrame2() {
+    const text = document.getElementById("t1").value;
+    parent.frames["frame2"].document.getElementById("t2").value = text;
+}
+
+function fromFrame2() {
+    const text = parent.frames["frame2"].document.getElementById("t2").value;
+    document.getElementById("t1").value = text;
+}
+
+</script>
+</head>
+
+<body>
+<textarea id="t1"></textarea>
+<button onclick="toFrame2()">Enviar para Frame 2</button>
+</body>
+</html>
