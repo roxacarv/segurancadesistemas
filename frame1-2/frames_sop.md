@@ -61,14 +61,14 @@ Com isso, foi possível:
 Eu centralizei toda a lógica JavaScript neste frame:
 
 ```javascript
-function enviarParaFrame2() {
-    const texto = document.getElementById("t1").value;
-    parent.frames["frame2"].document.getElementById("t2").value = texto;
+function toFrame2() {
+    const text = document.getElementById("t1").value;
+    parent.frames["frame2"].document.getElementById("t2").value = text;
 }
 
-function receberDoFrame2() {
-    const texto = parent.frames["frame2"].document.getElementById("t2").value;
-    document.getElementById("t1").value = texto;
+function fromFrame2() {
+    const text = parent.frames["frame2"].document.getElementById("t2").value;
+    document.getElementById("t1").value = text;
 }
 ```
 
